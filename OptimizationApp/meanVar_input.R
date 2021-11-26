@@ -81,9 +81,10 @@ rownames(covar_mat) <- assets
 colnames(covar_mat) <- assets
 covar_mat
 
-# OPTIMIZATION ----
+# JP MORGAN ESTIMATES -----
 
 library(NMOF)
+library(RColorBrewer)
 
 minvar.weigths <- minvar(var = covar_mat,
                          groups = list(c(1:3, 8), 4:6),
@@ -95,75 +96,155 @@ minvar.weigths <- minvar(var = covar_mat,
 
 minvar.weigths
 
-sharpe.weights <- mvPortfolio(m = rets,
+optim.weights <- mvPortfolio(m = rets,
                               var = covar_mat,
                               groups = list(c(1:3, 8), 4:6),
                               wmin = c(0.1, 0.05, 0.01, 0.1, 0.05, 0.01, 0.05, 0.05),
                               wmax = c(0.3, 0.2, 0.1 , 0.2, 0.15, 0.1, 0.15, 0.2),
                               groups.wmin = c(0.45, 0.25),
                               groups.wmax = c(0.6, 0.4),
-                              min.return = 0.05)
-sharpe.weights
+                              min.return = 0.05
+                              )
+optim.weights
 
-sigma <- sharpe.weights %*% covar_mat %*% sharpe.weights %>% sqrt() %>% as.numeric
-mu <- sum(sharpe.weights * rets)
+sigma_minvar <- minvar.weigths %*% covar_mat %*% minvar.weigths %>% sqrt() %>% as.numeric
+mu_minvar <- sum(minvar.weigths * rets)
+
+
+sigma_optim <- sharpe.weights %*% covar_mat %*% sharpe.weights %>% sqrt() %>% as.numeric
+mu_optim <- sum(sharpe.weights * rets)
+
 
 frontier <- mvFrontier(m = rets,
-                        var = covar_mat,
-                        groups = list(c(1:3, 8), 4:6),
-                        wmin = c(0.1, 0.05, 0.01, 0.1, 0.05, 0.01, 0.05, 0.05),
-                        wmax = c(0.3, 0.2, 0.1 , 0.2, 0.15, 0.1, 0.15, 0.2),
-                        groups.wmin = c(0.45, 0.25),
-                        groups.wmax = c(0.6, 0.4),
-                        n = 100)
-plot(frontier$volatility, frontier$returns, pch = 19, cex = .75, type = "o",
-     main = "Efficient frontier",xlab = "Expected volatility",ylab = "Expected return")
+                      var = covar_mat,
+                      groups = list(c(1:3, 8), 4:6),
+                      wmin = c(0.1, 0.05, 0.01, 0.1, 0.05, 0.01, 0.05, 0.05),
+                      wmax = c(0.3, 0.2, 0.1 , 0.2, 0.15, 0.1, 0.15, 0.2),
+                      groups.wmin = c(0.45, 0.25),
+                      groups.wmax = c(0.6, 0.4),
+                      n = 100,
+                      rf = NA
+                      )
 
-points(sigma, mu, col = "red", pch = 17)
+sharpe.weights <- frontier$portfolios[,28]
+sigma_sharpe <- sharpe.weights %*% covar_mat %*% sharpe.weights %>% sqrt() %>% as.numeric
+mu_sharpe <- sum(sharpe.weights * rets)
 
 
-# fPORTFOLIO OPTIMIZATION ----
+plot(frontier$volatility, frontier$returns, pch = 20, type = "l",
+     main = "MV Optimization, JP Morgan Estimates",xlab = "Expected Volatility",ylab = "Expected Return",
+     xlim = c(0.005,0.22), ylim = c(0.,0.1), panel.first = grid())
+points(sigma_minvar, mu_minvar, col = "blue", pch = 19)
+points(sigma_optim, mu_optim, col = "red", pch = 19)
+points(sigma_sharpe, mu_sharpe, col = "green", pch = 19)
+tbl <- frontier$returns/frontier$volatility %>% data.frame()
+rf <- 0.018/12
+slope <- (mu_sharpe-rf)/(sigma_sharpe)
+abline(a = rf, b = slope, lty = 3, col = "black")
+graphics::legend(x= "topleft", legend=c("Minimum Variance Portfolio", "Target return (5%) Portfolio", "Maximum Sharpe Portfolio", "Efficient Frontier", "CML"),
+                 col=c("blue", "red", "green", "black"), lty = c(NA, NA, NA, 1, 3), pch = c(19,19,19,NA, NA), cex = .8, text.font = 1)
+points(vols, rets, col = brewer.pal(n = nAssets, name = "Paired") , pch = 18)
+text(vols, rets, labels = assets, cex= 0.7, pos=1)
 
-momentargs <- list()
-momentargs$mu <- rets
-momentargs$Sigma <- covar_mat
-pfolio <- portfolioData(data = momentargs, spec = combinedConstraints)
-portfolioSt
-
-covtEstimator <- function (x, spec = NULL, ...) {
-  x.mat = as.matrix(x)
-  list(mu = rets, Sigma = covar_mat) 
-}
-
-defaultSpec <- portfolioSpec()
-setEstimator(defaultSpec) <- "covtEstimator"
-setTargetReturn(defaultSpec) <- 0.05
-
-boxConstraints <- c("minW[1]=0.1", "maxW[1]=0.3",
-                    "minW[2] = 0.05", "maxW[2]=0.2",
-                    "minW[3] = 0.01", "maxW[3]=0.1",
-                    "minW[4] = 0.1", "maxW[4]=0.2",
-                    "minW[5] = 0.05", "maxW[5]=0.15",
-                    "minW[6] = 0.01", "maxW[6]=0.1",
-                    "minW[7] = 0.05", "maxW[7]=0.15",
-                    "minW[8] = 0.05", "maxW[8]=0.2")
-groupConstraints <- c("minsumW[c(1:3,8)]=0.45", "maxsumW[c(1:3,8)]=0.6",
-                      "minsumW[c(4,5,6)]=0.25", "maxsumW[c(4,5,6)]=0.4")
-combinedConstraints <- c(boxConstraints, groupConstraints)
-
-myPort <- efficientPortfolio(pfolio, defaultSpec, constraints = combinedConstraints)
-
-points(myPort@portfolio@portfolio$targetRisk[2], myPort@portfolio@portfolio$targetReturn[2], col = "red", pch = 17)
-
-frontierTest <- portfolioFrontier(pfolio, defaultSpec)
-tailoredFrontierPlot(frontierTest)
-
-?portfolioFrontier
 
 # INVESCO ESITMATES ----
 
-invesco_cor <- read.csv("Invesco.csv")
-invesco_cor <- invesco_cor[,2:ncol(invesco_cor)]
-rownames(invesco_cor) <- assets
-colnames(invesco_cor) <- assets
-invesco_cor
+assets
+rets.invesco <- c(0.0760, 0.0890, 0.1120, 0.0160, 0.0080,
+                  0.0330, 0.0970, 0.0810)
+
+vols.invesco <- c(0.1680, 0.1970, 0.2310, 0.1170, 0.0150,
+                  0.1010, 0.1870, 0.1880)
+
+cor.invesco <- read.csv("Invesco.csv")
+cor.invesco <- cor.invesco[,2:ncol(cor.invesco)]
+rownames(cor.invesco) <- assets
+colnames(cor.invesco) <- assets
+cor.invesco <- as.matrix(cor.invesco)
+
+covar_mat.invesco <- cor2cov(Rho = cor.invesco, Sigma = vols.invesco)
+rownames(covar_mat.invesco) <- assets
+colnames(covar_mat.invesco) <- assets
+covar_mat.invesco
+
+minvar.weigths.invesco <- minvar(var = covar_mat.invesco,
+                                 groups = list(c(1:3, 8), 4:6),
+                                 wmin = c(0.1, 0.05, 0.01, 0.1, 
+                                          0.05, 0.01, 0.05, 0.05),
+                                 wmax = c(0.3, 0.2, 0.1 , 0.2,
+                                          0.15, 0.1, 0.15, 0.2),
+                                 groups.wmin = c(0.45, 0.25),
+                                 groups.wmax = c(0.6, 0.4)
+                                 )
+
+minvar.weigths.invesco
+
+optim.weights.invesco <- mvPortfolio(m = rets,
+                                     var = covar_mat.invesco,
+                                     groups = list(c(1:3, 8), 4:6),
+                                     wmin = c(0.1, 0.05, 0.01, 0.1,
+                                              0.05, 0.01, 0.05, 0.05),
+                                     wmax = c(0.3, 0.2, 0.1 , 0.2,
+                                              0.15, 0.1, 0.15, 0.2),
+                                     groups.wmin = c(0.45, 0.25),
+                                     groups.wmax = c(0.6, 0.4),
+                                     min.return = 0.05
+                                     )
+optim.weights.invesco
+
+sigma_minvar.invesco <- minvar.weigths.invesco %*% 
+  covar_mat.invesco %*% 
+  minvar.weigths.invesco %>% 
+  sqrt() %>% 
+  as.numeric
+
+mu_minvar.invesco <- sum(minvar.weigths.invesco * rets.invesco)
+
+
+sigma_optim.invesco <- optim.weights.invesco %*% 
+  covar_mat.invesco %*% 
+  optim.weights.invesco %>% 
+  sqrt() %>% 
+  as.numeric
+
+mu_optim.invesco <- sum(optim.weights.invesco * rets.invesco)
+
+
+frontier.invesco <- mvFrontier(m = rets.invesco,
+                               var = covar_mat.invesco,
+                               groups = list(c(1:3, 8), 4:6),
+                               wmin = c(0.1, 0.05, 0.01, 0.1, 
+                                        0.05, 0.01, 0.05, 0.05),
+                               wmax = c(0.3, 0.2, 0.1 , 0.2, 
+                                        0.15, 0.1, 0.15, 0.2),
+                               groups.wmin = c(0.45, 0.25),
+                               groups.wmax = c(0.6, 0.4),
+                               n = 100,
+                               rf = NA
+)
+
+sharpe.weights.invesco <- frontier.invesco$portfolios[,27]
+
+sigma_sharpe.invesco <- sharpe.weights.invesco %*% 
+  covar_mat.invesco %*% 
+  sharpe.weights.invesco %>% 
+  sqrt() %>% 
+  as.numeric
+
+mu_sharpe.invesco <- sum(sharpe.weights.invesco * rets.invesco)
+
+
+plot(frontier.invesco$volatility, frontier.invesco$returns, type = "l",
+     main = "MV Optimization, Invesco Estimates",xlab = "Expected Volatility",ylab = "Expected Return",
+     xlim = c(0.005,0.205), ylim = c(0.,0.1), panel.first = grid())
+points(sigma_minvar.invesco, mu_minvar.invesco, col = "blue", pch = 19)
+points(sigma_optim.invesco, mu_optim.invesco, col = "red", pch = 19)
+points(sigma_sharpe.invesco, mu_sharpe.invesco, col = "green", pch = 19)
+rf <- 0.018/12
+slope <- (mu_sharpe.invesco-rf)/(sigma_sharpe.invesco)
+abline(a = rf, b = slope, lty = 3, col = "black")
+graphics::legend(x= "topleft", legend=c("Minimum Variance Portfolio", "Target return (5%) Portfolio", "Maximum Sharpe Portfolio", "Efficient Frontier", "CML"),
+                 col=c("blue", "red", "green", "black"), lty = c(NA, NA, NA, 1, 3), 
+                 pch = c(19,19,19,NA, NA), cex = .8, text.font = 1)
+points(vols.invesco, rets.invesco, col = brewer.pal(n = nAssets, name = "Paired") , pch = 18)
+text(vols.invesco, rets.invesco, labels = assets, cex= 0.7, pos=1)
