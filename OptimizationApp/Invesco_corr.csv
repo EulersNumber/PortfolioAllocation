@@ -1,9 +1,0 @@
-﻿;U.S. Large Cap (1);U.S. Mid Cap (2);U.S. Small Cap (3);Long Term Treasury (4);Intermediate Term Treasury (5);Short Term Treasury (6);High Yield Corporate (7);REIT (8)
-U.S. Large Cap (1);1;0,95;0,89;-0,32;-0,38;-0,25;0,72;0,69
-U.S. Mid Cap (2);0,95;1;0,95;-0,32;-0,39;-0,28;0,75;0,75
-U.S. Small Cap (3);0,89;0,95;1;-0,37;-0,43;-0,27;0,7;0,7
-Long Term Treasury (4);-0,32;-0,32;-0,37;1;0,83;0,2;-0,18;0
-Intermediate Term Treasury (5);-0,38;-0,39;-0,43;0,83;1;0,41;-0,27;-0,09
-Short Term Treasury (6);-0,25;-0,28;-0,27;0,2;0,41;1;-0,25;-0,14
-High Yield Corporate (7);0,72;0,75;0,7;-0,18;-0,27;-0,25;1;0,69
-REIT (8);0,69;0,75;0,7;0;-0,09;-0,14;0,69;1
