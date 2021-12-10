@@ -31,7 +31,13 @@ In terms of usability, the optimal approach would have been to implement a portf
 
 ## Sources
 
-Historical optimization utilizes the [fPortfolio](https://cran.r-project.org/web/packages/fPortfolio/index.html)-package.
+Data:
 
-Forward-looking optimization utilizes the [NMOF](https://cran.r-project.org/web/packages/NMOF/index.html)-package.
+- Thomson Reuters Eikon Datastream
+- [Yahoo! Finance](https://finance.yahoo.com/)
+
+Optimization:
+
+- Historical optimization utilizes the [fPortfolio](https://cran.r-project.org/web/packages/fPortfolio/index.html)-package.
+- Forward-looking optimization utilizes the [NMOF](https://cran.r-project.org/web/packages/NMOF/index.html)-package.
 
