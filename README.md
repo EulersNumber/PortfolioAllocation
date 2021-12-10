@@ -25,6 +25,10 @@ Below is a list of the contents of the repository. The first level indicates the
   - MV_input_Invesco.R: forward-looking optimization using Invesco's estimates on returns, volatilities, and correlations of several financial asset classes
   - portfolio_metrics.R: statistics and performance plots for different portfolios. Adviseable to run this file last because it uses the optimal portfolios obtained from the historical optimization files by default
 
+## Usability
+
+In terms of usability, the optimal approach would have been to implement a portfolio optimizer app with a GUI, which would have allowed the user to optimize with different inputs without having to modify the code herself. However, this kind of an approach was unfortunately out of scope in our project. The current state of the project should be considered more of an backend implementation, or an optimization engine that lays out the necessry bulding blocks that an GUI (frontend) could then eventually use. Even though the current state of the tools allows for tailored optimization for an user that is somewhat familiar with programming, building a smooth and well-functioning GUI is a natural next step and would essentially complete the tool. Stay tuned for the implementation!
+
 ## Sources
 
 Historical optimization utilizes the [fPortfolio](https://cran.r-project.org/web/packages/fPortfolio/index.html)-package.
