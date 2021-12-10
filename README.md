@@ -15,12 +15,18 @@ Forward-looking optimization utilizes the [NMOF](https://cran.r-project.org/web/
 
 ## Contents
 
-Below is a list of the ccontents of the repository. The first level indicates the folder, and the second level indicates the file.
+Below is a list of the contents of the repository. The first level indicates the folder, and the second level indicates the file.
 
 - Data
   - monthly_ret_1994.xlsx: example data on financial asset classes' monthly returns in .xlsx-format
   - monthly_ret_1994.csv: example data on financial asset classes' monthly returns in .csv-format
+  - JPM_corr.csv: example data on a correlation matrix of financial asset classes in .csv-format. JP Morgan's estimates.
+  - Invesco_corr.csv: example data on a correlation matrix of financial asset classes in .csv-format. Invesco's estimates.
 - Optimization
   - helper_functions.R: a few helper functions to use along with optimization. Adviseable to run this file first
-  - Test
+  - MV_historical.R: historical Mean-Variance optimization
+  - CVaR_historical.R: historical Mean-CVaR optimization
+  - MV_input_JPM.R: forward-looking optimization using JP Morgan's estimates on returns, volatilities, and correlations of several financial asset classes
+  - MV_input_Invesco.R: forward-looking optimization using Invesco's estimates on returns, volatilities, and correlations of several financial asset classes
+  - portfolio_metrics.R: statistics and performance plots for different portfolios. Adviseable to run this file last because it uses the optimal portfolios obtained from the historical optimization files by default
 
