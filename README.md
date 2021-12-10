@@ -16,7 +16,9 @@ Forward-looking optimization utilizes the [NMOF](https://cran.r-project.org/web/
 ## Contents
 
 - Data
-  - Test
+  - monthly_ret_1994.xlsx: example data on financial asset classes' monthly returns in .xlsx-format
+  - monthly_ret_1994.csv: example data on financial asset classes' monthly returns in .csv-format
 - Optimization
+  - helper_functions.R: a few helper functions to use along with optimization. Adviseable to run this file first
   - Test
 
