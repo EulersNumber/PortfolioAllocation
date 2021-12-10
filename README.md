@@ -9,6 +9,5 @@ Mean-CVaR optimization is implemented only for historical data due to project sc
 
 ## Sources
 
-Historical optimization utilizes the [fPortfolio](https://cran.r-project.org/web/packages/fPortfolio/index.html)-package.
-
+Historical optimization utilizes the [fPortfolio](https://cran.r-project.org/web/packages/fPortfolio/index.html)-package.\n
 Forward-looking optimization utilizes the [NMOF](https://cran.r-project.org/web/packages/NMOF/index.html)-package.
