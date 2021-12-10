@@ -27,7 +27,7 @@ Below is a list of the contents of the repository. The first level indicates the
 
 ## Usability
 
-In terms of usability, the optimal approach would have been to implement a portfolio optimizer app with a GUI, which would have allowed the user to optimize with different inputs without having to modify the code herself. However, this kind of an approach was unfortunately out of scope in our project. The current state of the project should be considered more of an backend implementation, or an optimization engine that lays out the necessry bulding blocks that an GUI (frontend) could then eventually use. Even though the current state of the tools allows for tailored optimization for an user that is somewhat familiar with programming, building a smooth and well-functioning GUI is a natural next step and would essentially complete the tool. Stay tuned for the implementation!
+In terms of usability, the optimal approach would have been to implement a portfolio optimizer app with a GUI, which would have allowed the user to optimize with different inputs without having to modify the code herself. However, this kind of an approach was unfortunately out of scope in our project. The current state of the project should be considered more of a backend implementation, or an optimization engine that lays out the necessry bulding blocks that an GUI (frontend) could then eventually use. Even though the current state of the tool allows tailored optimization for an user that is somewhat familiar with programming, building a smooth and well-functioning GUI is a natural next step and would essentially complete the tool. Stay tuned for the implementation!
 
 ## Sources
 
