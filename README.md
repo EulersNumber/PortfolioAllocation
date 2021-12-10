@@ -31,7 +31,7 @@ In terms of usability, the optimal approach would have been to implement a portf
 
 ## Sources
 
-Data:
+Market data:
 
 - Thomson Reuters Eikon Datastream
 - [Yahoo! Finance](https://finance.yahoo.com/)
