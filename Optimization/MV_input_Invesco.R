@@ -90,4 +90,3 @@ points(invesco.sharpe.sigma, invesco.sharpe.mu, col = "green", pch = 15)
 graphics::legend(x= "topleft", legend=c("Minimum Variance Portfolio", "Maximum Sharpe Portfolio", "Efficient Frontier", "CAL"), col=c("blue", "green", "black", "black"), lty = c(NA, NA, 1, 3), pch = c(15,15,NA, NA), cex = .8, text.font = 1)
 points(invesco.vols, invesco.rets, col = brewer.pal(n = nAssets, name = "Paired") , pch = 18)
 text(invesco.vols, invesco.rets, labels = gsub(mv.assets, pattern = "_", replacement = " "), cex= 0.7, pos=1)
-

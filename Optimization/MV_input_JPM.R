@@ -29,7 +29,7 @@ colnames(jpm.cov) <- jpm.assets
 
 jpm.cov # full covariance matrix
 jpm.cov %>% diag() %>% sqrt() # expected volatilities
-jpm.cov %>% diag() %>% sqrt() - jpm.vols # should be zero if compouted correctly
+jpm.cov %>% diag() %>% sqrt() - jpm.vols # should be zero if computed correctly
 
 # Optimization ----
 
