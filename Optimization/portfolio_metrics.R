@@ -36,12 +36,17 @@ colnames(returns) <- c("EWP", "Max Sharpe", "Max Sortino", "Min Var", "Min CVaR"
 # Statistics ----
 
 # standard statistics
-basicStats(returns)
+stats <- basicStats(returns) %>% as.data.frame()
+stats <- rownames_to_column(stats)
+# Export return stats to Excel (optional)
+write.xlsx(stats, "return_stats.xlsx")
 
 # Drawdown statistics
 apply(returns, 2 , function(data) drawdownsStats(as.timeSeries(data)))
 
 # Performance plot ----
 
+?chart.TimeSeries.base
 chart.CumReturns(returns, lwd = 1, wealth.index = T,
-                 legend.loc = "topleft", main = "Growth of 1$ invested")
+                 legend.loc = "topleft", main = "Growth of 1$ invested",
+                 cex.legend = 1.2)
